@@ -1,0 +1,31 @@
+# =============================================================================
+# Example terraform.tfvars
+# =============================================================================
+# Copy this file to terraform.tfvars and fill in your values
+
+project_id  = "your-gcp-project"
+region      = "us-central1"
+environment = "prod"
+
+vpc_name = "shared-vpc"
+
+subnets = [
+  {
+    name = "postgres-subnet"
+    cidr = "10.8.0.0/24"
+  },
+  {
+    name = "app-subnet"
+    cidr = "10.9.0.0/24"
+  }
+]
+
+# Optional: allow SSH from specific IPs
+# allow_ssh_from_cidrs = ["1.2.3.4/32"]
+
+enable_cloud_nat = true
+
+labels = {
+  project     = "shared-infrastructure"
+  managed_by  = "terraform"
+}
