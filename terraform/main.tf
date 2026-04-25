@@ -168,7 +168,24 @@ output "vpc_name" {
 }
 
 output "vpc_id" {
-  description = "ID of the VPC network"
+
+# =============================================================================
+# VPC Access Connector (for external service access: GitHub Actions, Cloud Run)
+# =============================================================================
+
+resource "google_vpc_access_connector" "github_actions" {
+  name          = "${var.vpc_name}-github-connector"
+  region        = var.region
+  network       = google_compute_network.vpc.name
+  ip_cidr_range = "10.10.2.0/28"
+  machine_type  = "e2-micro"
+
+  depends_on = [google_project_service.vpcaccess, google_compute_network.vpc]
+}
+
+# =============================================================================
+# Outputs
+# =============================================================================
   value       = google_compute_network.vpc.id
 }
 
@@ -205,4 +222,13 @@ output "region" {
 output "nat_ip_allocated" {
   description = "Whether Cloud NAT is enabled"
   value       = var.enable_cloud_nat
+}
+output "vpc_connector_name" {
+  description = "Name of VPC Access Connector for external service access"
+  value       = google_vpc_access_connector.github_actions.name
+}
+
+output "vpc_connector_self_link" {
+  description = "Self link of VPC Access Connector"
+  value       = google_vpc_access_connector.github_actions.self_link
 }
