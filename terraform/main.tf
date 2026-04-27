@@ -159,21 +159,11 @@ resource "google_compute_router_nat" "nat" {
 }
 
 # =============================================================================
-# Outputs
-# =============================================================================
-
-output "vpc_name" {
-  description = "Name of the VPC network"
-  value       = google_compute_network.vpc.name
-}
-
-output "vpc_id" {
-
-# =============================================================================
 # VPC Access Connector (for external service access: GitHub Actions, Cloud Run)
 # =============================================================================
 
 resource "google_vpc_access_connector" "github_actions" {
+  project       = var.project_id
   name          = "${var.vpc_name}-github-connector-${var.environment}"
   region        = var.region
   network       = google_compute_network.vpc.name
@@ -186,6 +176,14 @@ resource "google_vpc_access_connector" "github_actions" {
 # =============================================================================
 # Outputs
 # =============================================================================
+
+output "vpc_name" {
+  description = "Name of the VPC network"
+  value       = google_compute_network.vpc.name
+}
+
+output "vpc_id" {
+  description = "ID of the VPC network"
   value       = google_compute_network.vpc.id
 }
 
@@ -223,6 +221,7 @@ output "nat_ip_allocated" {
   description = "Whether Cloud NAT is enabled"
   value       = var.enable_cloud_nat
 }
+
 output "vpc_connector_name" {
   description = "Name of VPC Access Connector for external service access"
   value       = google_vpc_access_connector.github_actions.name
