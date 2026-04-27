@@ -63,7 +63,7 @@ resource "google_compute_subnetwork" "subnets" {
 
 resource "google_compute_firewall" "allow_internal" {
   project = var.project_id
-  name    = "${var.vpc_name}-allow-internal"
+  name    = "${var.vpc_name}-allow-internal-${var.environment}"
   network = google_compute_network.vpc.name
 
   direction = "INGRESS"
@@ -86,7 +86,7 @@ resource "google_compute_firewall" "allow_internal" {
 resource "google_compute_firewall" "allow_ssh" {
   project = var.project_id
   count   = length(var.allow_ssh_from_cidrs) > 0 ? 1 : 0
-  name    = "${var.vpc_name}-allow-ssh"
+  name    = "${var.vpc_name}-allow-ssh-${var.environment}"
   network = google_compute_network.vpc.name
 
   allow {
@@ -99,7 +99,7 @@ resource "google_compute_firewall" "allow_ssh" {
 
 resource "google_compute_firewall" "allow_postgres" {
   project = var.project_id
-  name    = "${var.vpc_name}-allow-postgres"
+  name    = "${var.vpc_name}-allow-postgres-${var.environment}"
   network = google_compute_network.vpc.name
 
   allow {
@@ -114,7 +114,7 @@ resource "google_compute_firewall" "allow_postgres" {
 resource "google_compute_firewall" "allow_egress" {
   project = var.project_id
   count   = var.enable_cloud_nat ? 1 : 0
-  name    = "${var.vpc_name}-allow-egress"
+  name    = "${var.vpc_name}-allow-egress-${var.environment}"
   network = google_compute_network.vpc.name
 
   direction = "EGRESS"
@@ -133,7 +133,7 @@ resource "google_compute_firewall" "allow_egress" {
 resource "google_compute_router" "router" {
   project = var.project_id
   count   = var.enable_cloud_nat ? 1 : 0
-  name    = "${var.vpc_name}-router"
+  name    = "${var.vpc_name}-router-${var.environment}"
   region  = var.region
   network = google_compute_network.vpc.id
 
@@ -143,7 +143,7 @@ resource "google_compute_router" "router" {
 resource "google_compute_router_nat" "nat" {
   project = var.project_id
   count   = var.enable_cloud_nat ? 1 : 0
-  name    = "${var.vpc_name}-nat"
+  name    = "${var.vpc_name}-nat-${var.environment}"
   router  = google_compute_router.router[0].name
   region  = var.region
 
@@ -174,7 +174,7 @@ output "vpc_id" {
 # =============================================================================
 
 resource "google_vpc_access_connector" "github_actions" {
-  name          = "${var.vpc_name}-github-connector"
+  name          = "${var.vpc_name}-github-connector-${var.environment}"
   region        = var.region
   network       = google_compute_network.vpc.name
   ip_cidr_range = "10.10.2.0/28"
