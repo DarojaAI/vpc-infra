@@ -169,6 +169,7 @@ resource "google_vpc_access_connector" "github_actions" {
   network       = google_compute_network.vpc.name
   ip_cidr_range = "10.10.2.0/28"
   machine_type  = "e2-micro"
+  max_instances = 3
 
   depends_on = [google_project_service.vpcaccess, google_compute_network.vpc]
 }
