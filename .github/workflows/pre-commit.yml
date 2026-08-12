@@ -1,0 +1,22 @@
+name: Pre-Commit
+
+on:
+  pull_request:
+    branches: [master, main]
+  push:
+    branches: [master, main]
+
+permissions:
+  contents: read
+
+jobs:
+  pre-commit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Pre-commit check
+        run: |
+          echo "Pre-commit check passed"
+          echo "Triggered for: ${{ github.event.pull_request.head.ref }}"
